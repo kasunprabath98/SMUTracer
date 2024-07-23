@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/custom_toolbar"
+    android:layout_width="300dp"
+    android:layout_height="50dp"
+    android:background="?attr/colorPrimary"
+    android:minHeight="?attr/actionBarSize"
+    android:theme="@style/ThemeOverlay.AppCompat.Dark"
+    android:visibility="visible">
+
+    <Button
+        android:id="@+id/libs"
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@android:color/transparent"
+        android:strokeWidth="1.0"
+        android:text="Libs"
+        android:textColor="@android:color/white"
+        android:textSize="10dp" />
+
+    <Button
+        android:id="@+id/classes"
+        android:layout_width="70dp"
+        android:layout_height="50dp"
+        android:backgroundTint="@android:color/transparent"
+        android:strokeWidth="1.0"
+        android:text="Classes"
+        android:textColor="@android:color/white"
+        android:textSize="10dp" />
+
+    <Button
+        android:id="@+id/filter"
+        android:layout_width="56dp"
+        android:layout_height="50dp"
+        android:backgroundTint="@android:color/transparent"
+        android:strokeWidth="1.0"
+        android:text="filter"
+        android:textColor="@android:color/white"
+        android:textSize="10dp" />
+
+    <Button
+        android:id="@+id/registers"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:backgroundTint="@android:color/transparent"
+        android:strokeWidth="1.0"
+        android:text="Regs"
+        android:textColor="@android:color/white"
+        android:textSize="10dp" />
+
+    <Button
+        android:id="@+id/vregs"
+        android:layout_width="56dp"
+        android:layout_height="50dp"
+        android:backgroundTint="@android:color/transparent"
+        android:strokeWidth="1.0"
+        android:text="Vregs"
+        android:textColor="@android:color/white"
+        android:textSize="10dp" />
+
+    <Button
+        android:id="@+id/fieldread"
+        android:layout_width="56dp"
+        android:layout_height="50dp"
+        android:backgroundTint="@android:color/transparent"
+        android:strokeWidth="1.0"
+        android:text="Field_Read"
+        android:textColor="@android:color/white"
+        android:textSize="10dp" />
+
+    <Button
+        android:id="@+id/fieldwrite"
+        android:layout_width="56dp"
+        android:layout_height="50dp"
+        android:backgroundTint="@android:color/transparent"
+        android:strokeWidth="1.0"
+        android:text="Field_Write"
+        android:textColor="@android:color/white"
+        android:textSize="10dp" />
+
+</android.support.v7.widget.Toolbar>

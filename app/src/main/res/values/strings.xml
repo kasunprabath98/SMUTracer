@@ -1,0 +1,80 @@
+<resources>
+    <string name="app_name">App Tracer</string>
+    <string name="action_settings">Settings</string>
+    <string name="search">Search</string>
+    <string name="trace_type">Trace Type</string>
+    <string name="enter_trigger_condition_optional">Enter trigger condition (optional)</string>
+    <string name="trace_file_size_max_50mb">Trace file size (max 50MB)</string>
+    <string name="method_name">Method name</string>
+    <string name="trace_calle_configurations">Enter trace calle configurations</string>
+    <string name="trace_calles_in_unselected_classes">Trace calles in unselected classes</string>
+    <string name="call_depth_1_for_unlimited">call depth (-1 for unlimited)</string>
+    <string name="base_address_shared_library">Base address(Shared Library)</string>
+    <string name="enter_base_address_configurations">Enter shared library configurations</string>
+    <string name="offset_starts_with_0x">Offset (starts with 0x)</string>
+    <string name="instruction_offset_starts_with_0x">Instruction offset (starts with 0x)</string>
+    <string name="length_max_64_words">Length (Max 64) words</string>
+    <string name="proceed">Proceed</string>
+
+    <string-array name="nav_list">
+        <item>Libraries</item>
+        <item>Classes</item>
+        <item>Filter</item>
+        <item>Framework</item>
+        <item>Regs</item>
+        <item>VRegs</item>
+        <item>Field_Read</item>
+        <item>Field_Write</item>
+    </string-array>
+
+    <string-array name="filesize">
+        <item>MB</item>
+        <item>kB</item>
+        <item>Bytes</item>
+    </string-array>
+
+    <!--string-array name="triggertype">
+        <item></item>
+        <item>onClick</item>
+        <item>OnLongClick</item>
+        <item>OnFocusChange</item>
+        <item>OnKey</item>
+        <item>OnTouch</item>
+        <item>OnCreateContextMenu</item>
+    </string-array-->
+
+    <string-array name="baseaddr">
+        <item>SP</item>
+        <item>x0</item>
+        <item>x1</item>
+        <item>x2</item>
+        <item>x3</item>
+        <item>x4</item>
+        <item>x5</item>
+        <item>x6</item>
+        <item>x7</item>
+        <item>x8</item>
+        <item>x9</item>
+        <item>x10</item>
+        <item>x11</item>
+        <item>x12</item>
+        <item>x13</item>
+        <item>x14</item>
+        <item>x15</item>
+        <item>x16</item>
+        <item>x17</item>
+        <item>x18</item>
+        <item>x19</item>
+        <item>x20</item>
+        <item>x21</item>
+        <item>x22</item>
+        <item>x23</item>
+        <item>x24</item>
+        <item>x25</item>
+        <item>x26</item>
+        <item>x27</item>
+        <item>x28</item>
+        <item>x29</item>
+        <item>x30</item>
+    </string-array>
+</resources>
