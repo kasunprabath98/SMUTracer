@@ -2,7 +2,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/backgroundGrey"
     android:orientation="vertical"
+    android:paddingStart="@dimen/list_vertical_padding"
+    android:paddingEnd="@dimen/list_vertical_padding"
     tools:context=".MainActivity">
 
     <!--include layout="@layout/toolbar"/-->
@@ -11,7 +14,7 @@
         android:id="@+id/list_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp">
-    </ListView>
+        android:layout_margin="0dp"
+        android:divider="@null"></ListView>
 
 </androidx.appcompat.widget.LinearLayoutCompat>
