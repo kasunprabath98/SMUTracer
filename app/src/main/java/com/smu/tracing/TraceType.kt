@@ -14,12 +14,13 @@ import android.widget.Spinner
 import android.widget.Toast
 import android.widget.ToggleButton
 import androidx.appcompat.app.AppCompatActivity
+import com.google.android.material.materialswitch.MaterialSwitch
+import com.google.android.material.textfield.TextInputEditText
 import java.io.File
 
-class TraceType : AppCompatActivity(), AdapterView.OnItemSelectedListener {
+class TraceType : AppCompatActivity() {
     var traceLevel: Int = 0
     var fileSize: Long = 0
-    var checked: Int = 0
     private var strUnit: String? = null
 
     // variable for trigger tracing feature
@@ -28,7 +29,7 @@ class TraceType : AppCompatActivity(), AdapterView.OnItemSelectedListener {
     // variables for tracing child methods
     var traceCallee: Int = 0
     private var callDepth: String? = null
-    private var traceCalleeEnableBtn: ToggleButton? = null
+    private var traceCalleeEnableBtn: MaterialSwitch? = null
 
     // variables for memory debug feature
     private var baseAddr: String? = null
@@ -66,38 +67,34 @@ class TraceType : AppCompatActivity(), AdapterView.OnItemSelectedListener {
         autoCompleteTextTraceFileSize?.setAdapter(fileSizeAdapter);
         autoCompleteTextTraceFileSize?.setOnItemClickListener{
                 adapterView, view, i, l ->
-
+            val stringValue = resources.getStringArray(R.array.filesize).get(i).toString();
+            strUnit = stringValue;
         }
 
         val baseAddressesAdapter =  ArrayAdapter.createFromResource(this , R.array.baseaddr ,  android.R.layout.simple_spinner_dropdown_item ,)
         autoCompleteTextViewBaseAddress?.setAdapter(baseAddressesAdapter)
+        autoCompleteTextViewBaseAddress?.setOnItemClickListener {
+                adapterView, view, i, l ->
+            val stringValue = resources.getStringArray(R.array.baseaddr).get(i).toString();
+            baseAddr = stringValue;
+        }
 
 
-
-        traceCalleeEnableBtn = findViewById<View>(R.id.toggleButton) as ToggleButton
+        traceCalleeEnableBtn = findViewById<MaterialSwitch>(R.id.trace_calles)
 
         val traceCfg = File("/data/local/tmp/com.smu.tracing");
 
         val button = findViewById<View>(R.id.button_trace) as Button
         val buttonTraceCfgDel = findViewById<View>(R.id.button_tracecfg_del) as Button
-        val textTraceFileSize = findViewById<View>(R.id.trace_file_size) as EditText
-        val textMethodName = findViewById<View>(R.id.textMethod) as EditText
-        val textCallDepth = findViewById<View>(R.id.textCallDepth) as EditText
-        val textOffset = findViewById<View>(R.id.textOffset) as EditText
-        val textInstructionOffset = findViewById<View>(R.id.textInstructionOffset) as EditText
-        val textLength = findViewById<View>(R.id.textLength) as EditText
 
-        // Drop-down menu for file size unit
-        val spinner = findViewById<View>(R.id.spinnerfilesize) as Spinner
-        val adapter = ArrayAdapter.createFromResource(
-            this,
-            R.array.filesize,
-            android.R.layout.simple_spinner_item
-        )
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        spinner.adapter = adapter
-        spinner.setSelection(0, false)
-        spinner.onItemSelectedListener = this
+
+        val textTraceFileSize: TextInputEditText = findViewById(R.id.edit_text_file_size)
+        val textMethodName = findViewById<TextInputEditText>(R.id.method_name)
+        val textCallDepth = findViewById<TextInputEditText>(R.id.call_depth)
+        val textOffset = findViewById<TextInputEditText>(R.id.base_address_input)
+        val textInstructionOffset = findViewById<TextInputEditText>(R.id.instruction_offset)
+        val textLength = findViewById<TextInputEditText>(R.id.word_length)
+
 
         // Drop-down menu for selecting trigger type
         //Spinner spinner_trigger = (Spinner) findViewById(R.id.spinnerTriggerType);
@@ -107,17 +104,6 @@ class TraceType : AppCompatActivity(), AdapterView.OnItemSelectedListener {
         //spinner_trigger.setSelection(0,false);
         //spinner_trigger.setOnItemSelectedListener(this);
 
-        // Drop-down menu for selecting base address
-        val spinner_base_addr = findViewById<View>(R.id.spinnerBaseAddr) as Spinner
-        val adapter_base_addr = ArrayAdapter.createFromResource(
-            this,
-            R.array.baseaddr,
-            android.R.layout.simple_spinner_item
-        )
-        adapter_base_addr.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        spinner_base_addr.adapter = adapter_base_addr
-        spinner_base_addr.setSelection(0, false)
-        spinner_base_addr.onItemSelectedListener = this
 
         button.setOnClickListener { view ->
             if (textTraceFileSize.text.toString() == "") {
@@ -221,34 +207,4 @@ class TraceType : AppCompatActivity(), AdapterView.OnItemSelectedListener {
         startActivity(intent)
     }
 
-
-    override fun onItemSelected(adapterView: AdapterView<*>, view: View, i: Int, l: Long) {
-        val spinner = findViewById<View>(R.id.spinnerfilesize) as Spinner
-        //Spinner spinner_trigger = (Spinner) findViewById(R.id.spinnerTriggerType);
-        val spinner_baseaddr = findViewById<View>(R.id.spinnerBaseAddr) as Spinner
-
-        val id = adapterView.id
-        when (id) {
-            R.id.spinnerfilesize -> {
-                strUnit = spinner.selectedItem.toString()
-                Toast.makeText(
-                    adapterView.context,
-                    "You have selected $strUnit",
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-
-            R.id.spinnerBaseAddr -> {
-                baseAddr = spinner_baseaddr.selectedItem.toString()
-                Toast.makeText(
-                    adapterView.context,
-                    "You have selected $baseAddr",
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-        }
-    }
-
-    override fun onNothingSelected(adapterView: AdapterView<*>?) {
-    }
 }

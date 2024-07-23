@@ -152,7 +152,7 @@
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/editTextFileSize"
+                    android:id="@+id/edit_text_file_size"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="number" />
@@ -255,7 +255,9 @@
                     />
                 <com.google.android.material.materialswitch.MaterialSwitch
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content"
+                    android:id="@+id/trace_calles"
+                    />
             </LinearLayout>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -360,312 +362,312 @@
 
 
 
-        <TextView
-            android:id="@+id/textView4"
-            android:layout_width="138dp"
-            android:layout_height="39dp"
-            android:layout_marginStart="20dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginTop="20dp"
-            android:text="Enter Trace File Size (max 50MB)"
-            android:textColor="#000000"
-            android:textSize="14sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/base_address_layout" />
+<!--        <TextView-->
+<!--            android:id="@+id/textView4"-->
+<!--            android:layout_width="138dp"-->
+<!--            android:layout_height="39dp"-->
+<!--            android:layout_marginStart="20dp"-->
+<!--            android:layout_marginLeft="20dp"-->
+<!--            android:layout_marginTop="20dp"-->
+<!--            android:text="Enter Trace File Size (max 50MB)"-->
+<!--            android:textColor="#000000"-->
+<!--            android:textSize="14sp"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toBottomOf="@+id/base_address_layout" />-->
 
-        <TextView
-            android:id="@+id/textView19"
-            android:layout_width="134dp"
-            android:layout_height="38dp"
-            android:layout_marginStart="20dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginTop="12dp"
-            android:text="Trigger condition (optional)"
-            android:textColor="#000000"
-            android:textSize="14sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView4" />
+<!--        <TextView-->
+<!--            android:id="@+id/textView19"-->
+<!--            android:layout_width="134dp"-->
+<!--            android:layout_height="38dp"-->
+<!--            android:layout_marginStart="20dp"-->
+<!--            android:layout_marginLeft="20dp"-->
+<!--            android:layout_marginTop="12dp"-->
+<!--            android:text="Trigger condition (optional)"-->
+<!--            android:textColor="#000000"-->
+<!--            android:textSize="14sp"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toBottomOf="@+id/textView4" />-->
 
-        <TextView
-            android:id="@+id/textView20"
-            android:layout_width="134dp"
-            android:layout_height="38dp"
-            android:layout_marginStart="20dp"
-            android:layout_marginLeft="20dp"
-            android:text="Select base address (shared library)"
-            android:textColor="#000000"
-            android:textSize="14sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView29"
-            app:layout_constraintVertical_bias="0.137" />
+<!--        <TextView-->
+<!--            android:id="@+id/textView20"-->
+<!--            android:layout_width="134dp"-->
+<!--            android:layout_height="38dp"-->
+<!--            android:layout_marginStart="20dp"-->
+<!--            android:layout_marginLeft="20dp"-->
+<!--            android:text="Select base address (shared library)"-->
+<!--            android:textColor="#000000"-->
+<!--            android:textSize="14sp"-->
+<!--            app:layout_constraintBottom_toBottomOf="parent"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toBottomOf="@+id/textView29"-->
+<!--            app:layout_constraintVertical_bias="0.137" />-->
 
-        <TextView
-            android:id="@+id/textView22"
-            android:layout_width="134dp"
-            android:layout_height="38dp"
-            android:layout_marginStart="20dp"
-            android:layout_marginLeft="20dp"
-            android:text="Instruction offset (shared library)"
-            android:textColor="#000000"
-            android:textSize="14sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView20"
-            app:layout_constraintVertical_bias="0.103" />
+<!--        <TextView-->
+<!--            android:id="@+id/textView22"-->
+<!--            android:layout_width="134dp"-->
+<!--            android:layout_height="38dp"-->
+<!--            android:layout_marginStart="20dp"-->
+<!--            android:layout_marginLeft="20dp"-->
+<!--            android:text="Instruction offset (shared library)"-->
+<!--            android:textColor="#000000"-->
+<!--            android:textSize="14sp"-->
+<!--            app:layout_constraintBottom_toBottomOf="parent"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toBottomOf="@+id/textView20"-->
+<!--            app:layout_constraintVertical_bias="0.103" />-->
 
-        <TextView
-            android:id="@+id/textView23"
-            android:layout_width="20dp"
-            android:layout_height="39dp"
-            android:layout_marginStart="4dp"
-            android:layout_marginLeft="4dp"
-            android:gravity="center"
-            android:text="0x"
-            android:textColor="#000000"
-            android:textSize="14sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/textView22"
-            app:layout_constraintTop_toBottomOf="@+id/textView20"
-            app:layout_constraintVertical_bias="0.105" />
+<!--        <TextView-->
+<!--            android:id="@+id/textView23"-->
+<!--            android:layout_width="20dp"-->
+<!--            android:layout_height="39dp"-->
+<!--            android:layout_marginStart="4dp"-->
+<!--            android:layout_marginLeft="4dp"-->
+<!--            android:gravity="center"-->
+<!--            android:text="0x"-->
+<!--            android:textColor="#000000"-->
+<!--            android:textSize="14sp"-->
+<!--            app:layout_constraintBottom_toBottomOf="parent"-->
+<!--            app:layout_constraintStart_toEndOf="@+id/textView22"-->
+<!--            app:layout_constraintTop_toBottomOf="@+id/textView20"-->
+<!--            app:layout_constraintVertical_bias="0.105" />-->
 
-        <TextView
-            android:id="@+id/textView24"
-            android:layout_width="20dp"
-            android:layout_height="39dp"
-            android:layout_marginStart="4dp"
-            android:layout_marginLeft="4dp"
-            android:layout_marginTop="32dp"
-            android:gravity="center"
-            android:text="0x"
-            android:textColor="#000000"
-            android:textSize="14sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toEndOf="@+id/textView21"
-            app:layout_constraintTop_toBottomOf="@+id/textView29" />
+<!--        <TextView-->
+<!--            android:id="@+id/textView24"-->
+<!--            android:layout_width="20dp"-->
+<!--            android:layout_height="39dp"-->
+<!--            android:layout_marginStart="4dp"-->
+<!--            android:layout_marginLeft="4dp"-->
+<!--            android:layout_marginTop="32dp"-->
+<!--            android:gravity="center"-->
+<!--            android:text="0x"-->
+<!--            android:textColor="#000000"-->
+<!--            android:textSize="14sp"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintHorizontal_bias="0.0"-->
+<!--            app:layout_constraintStart_toEndOf="@+id/textView21"-->
+<!--            app:layout_constraintTop_toBottomOf="@+id/textView29" />-->
 
-        <TextView
-            android:id="@+id/textView21"
-            android:layout_width="55dp"
-            android:layout_height="38dp"
-            android:layout_marginStart="4dp"
-            android:layout_marginLeft="4dp"
-            android:layout_marginTop="32dp"
-            android:gravity="center"
-            android:text="Offset"
-            android:textColor="#000000"
-            android:textSize="14sp"
-            app:layout_constraintStart_toEndOf="@+id/spinnerBaseAddr"
-            app:layout_constraintTop_toBottomOf="@+id/textView29" />
+<!--        <TextView-->
+<!--            android:id="@+id/textView21"-->
+<!--            android:layout_width="55dp"-->
+<!--            android:layout_height="38dp"-->
+<!--            android:layout_marginStart="4dp"-->
+<!--            android:layout_marginLeft="4dp"-->
+<!--            android:layout_marginTop="32dp"-->
+<!--            android:gravity="center"-->
+<!--            android:text="Offset"-->
+<!--            android:textColor="#000000"-->
+<!--            android:textSize="14sp"-->
+<!--            app:layout_constraintStart_toEndOf="@+id/spinnerBaseAddr"-->
+<!--            app:layout_constraintTop_toBottomOf="@+id/textView29" />-->
 
-        <TextView
-            android:id="@+id/textView25"
-            android:layout_width="45dp"
-            android:layout_height="39dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
-            android:gravity="center"
-            android:text="Length (Words)"
-            android:textColor="#000000"
-            android:textSize="12sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/textInstructionOffset"
-            app:layout_constraintTop_toBottomOf="@+id/textView20"
-            app:layout_constraintVertical_bias="0.105" />
+<!--        <TextView-->
+<!--            android:id="@+id/textView25"-->
+<!--            android:layout_width="45dp"-->
+<!--            android:layout_height="39dp"-->
+<!--            android:layout_marginStart="8dp"-->
+<!--            android:layout_marginLeft="8dp"-->
+<!--            android:gravity="center"-->
+<!--            android:text="Length (Words)"-->
+<!--            android:textColor="#000000"-->
+<!--            android:textSize="12sp"-->
+<!--            app:layout_constraintBottom_toBottomOf="parent"-->
+<!--            app:layout_constraintStart_toEndOf="@+id/textInstructionOffset"-->
+<!--            app:layout_constraintTop_toBottomOf="@+id/textView20"-->
+<!--            app:layout_constraintVertical_bias="0.105" />-->
 
-        <TextView
-            android:id="@+id/textView27"
-            android:layout_width="67dp"
-            android:layout_height="19dp"
-            android:layout_marginTop="0dp"
-            android:gravity="center"
-            android:text="(Max 64 words)"
-            android:textColor="#000000"
-            android:textSize="9sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="@+id/textView25"
-            app:layout_constraintTop_toBottomOf="@+id/textView25" />
+<!--        <TextView-->
+<!--            android:id="@+id/textView27"-->
+<!--            android:layout_width="67dp"-->
+<!--            android:layout_height="19dp"-->
+<!--            android:layout_marginTop="0dp"-->
+<!--            android:gravity="center"-->
+<!--            android:text="(Max 64 words)"-->
+<!--            android:textColor="#000000"-->
+<!--            android:textSize="9sp"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintHorizontal_bias="0.0"-->
+<!--            app:layout_constraintStart_toStartOf="@+id/textView25"-->
+<!--            app:layout_constraintTop_toBottomOf="@+id/textView25" />-->
 
-        <TextView
-            android:id="@+id/textView31"
-            android:layout_width="wrap_content"
-            android:layout_height="19dp"
-            android:gravity="center"
-            android:text="(-1 for unlimited depth)"
-            android:textColor="#000000"
-            android:textSize="9sp"
-            app:layout_constraintStart_toStartOf="@+id/textView30"
-            app:layout_constraintTop_toBottomOf="@+id/textView30" />
+<!--        <TextView-->
+<!--            android:id="@+id/textView31"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="19dp"-->
+<!--            android:gravity="center"-->
+<!--            android:text="(-1 for unlimited depth)"-->
+<!--            android:textColor="#000000"-->
+<!--            android:textSize="9sp"-->
+<!--            app:layout_constraintStart_toStartOf="@+id/textView30"-->
+<!--            app:layout_constraintTop_toBottomOf="@+id/textView30" />-->
 
-        <EditText
-            android:id="@+id/trace_file_size"
-            android:layout_width="66dp"
-            android:layout_height="39dp"
-            android:layout_marginStart="4dp"
-            android:layout_marginLeft="4dp"
-            android:layout_marginTop="20dp"
-            android:ems="10"
-            android:inputType="number"
-            android:textSize="14sp"
-            app:layout_constraintStart_toEndOf="@+id/textView4"
-            app:layout_constraintTop_toBottomOf="@+id/base_address_layout" />
+<!--        <EditText-->
+<!--            android:id="@+id/trace_file_size"-->
+<!--            android:layout_width="66dp"-->
+<!--            android:layout_height="39dp"-->
+<!--            android:layout_marginStart="4dp"-->
+<!--            android:layout_marginLeft="4dp"-->
+<!--            android:layout_marginTop="20dp"-->
+<!--            android:ems="10"-->
+<!--            android:inputType="number"-->
+<!--            android:textSize="14sp"-->
+<!--            app:layout_constraintStart_toEndOf="@+id/textView4"-->
+<!--            app:layout_constraintTop_toBottomOf="@+id/base_address_layout" />-->
 
-        <EditText
-            android:id="@+id/textCallDepth"
-            android:layout_width="65dp"
-            android:layout_height="35dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginTop="8dp"
-            android:ems="10"
-            android:inputType="numberSigned|numberDecimal"
-            android:textSize="14sp"
-            app:layout_constraintStart_toEndOf="@+id/textView30"
-            app:layout_constraintTop_toBottomOf="@+id/textView19" />
+<!--        <EditText-->
+<!--            android:id="@+id/textCallDepth"-->
+<!--            android:layout_width="65dp"-->
+<!--            android:layout_height="35dp"-->
+<!--            android:layout_marginStart="8dp"-->
+<!--            android:layout_marginLeft="8dp"-->
+<!--            android:layout_marginTop="8dp"-->
+<!--            android:ems="10"-->
+<!--            android:inputType="numberSigned|numberDecimal"-->
+<!--            android:textSize="14sp"-->
+<!--            app:layout_constraintStart_toEndOf="@+id/textView30"-->
+<!--            app:layout_constraintTop_toBottomOf="@+id/textView19" />-->
 
-        <Spinner
-            android:id="@+id/spinnerfilesize"
-            android:layout_width="100dp"
-            android:layout_height="39dp"
-            android:layout_marginStart="4dp"
-            android:layout_marginLeft="4dp"
-            android:layout_marginTop="20dp"
-            app:layout_constraintStart_toEndOf="@+id/trace_file_size"
-            app:layout_constraintTop_toBottomOf="@+id/base_address_layout" />
+<!--        <Spinner-->
+<!--            android:id="@+id/spinnerfilesize"-->
+<!--            android:layout_width="100dp"-->
+<!--            android:layout_height="39dp"-->
+<!--            android:layout_marginStart="4dp"-->
+<!--            android:layout_marginLeft="4dp"-->
+<!--            android:layout_marginTop="20dp"-->
+<!--            app:layout_constraintStart_toEndOf="@+id/trace_file_size"-->
+<!--            app:layout_constraintTop_toBottomOf="@+id/base_address_layout" />-->
 
-        <Spinner
-            android:id="@+id/spinnerBaseAddr"
-            android:layout_width="90dp"
-            android:layout_height="39dp"
-            android:layout_marginStart="4dp"
-            android:layout_marginLeft="4dp"
-            android:layout_marginTop="32dp"
-            app:layout_constraintStart_toEndOf="@+id/textView20"
-            app:layout_constraintTop_toBottomOf="@+id/textView29" />
+<!--        <Spinner-->
+<!--            android:id="@+id/spinnerBaseAddr"-->
+<!--            android:layout_width="90dp"-->
+<!--            android:layout_height="39dp"-->
+<!--            android:layout_marginStart="4dp"-->
+<!--            android:layout_marginLeft="4dp"-->
+<!--            android:layout_marginTop="32dp"-->
+<!--            app:layout_constraintStart_toEndOf="@+id/textView20"-->
+<!--            app:layout_constraintTop_toBottomOf="@+id/textView29" />-->
 
-        <EditText
-            android:id="@+id/textOffset"
-            android:layout_width="55dp"
-            android:layout_height="39dp"
-            android:layout_marginStart="2dp"
-            android:layout_marginLeft="2dp"
-            android:layout_marginRight="2dp"
-            android:layout_marginTop="32dp"
-            android:inputType="text"
-            android:textSize="16sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toEndOf="@+id/textView24"
-            app:layout_constraintTop_toBottomOf="@+id/textView29" />
+<!--        <EditText-->
+<!--            android:id="@+id/textOffset"-->
+<!--            android:layout_width="55dp"-->
+<!--            android:layout_height="39dp"-->
+<!--            android:layout_marginStart="2dp"-->
+<!--            android:layout_marginLeft="2dp"-->
+<!--            android:layout_marginRight="2dp"-->
+<!--            android:layout_marginTop="32dp"-->
+<!--            android:inputType="text"-->
+<!--            android:textSize="16sp"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintHorizontal_bias="0.0"-->
+<!--            app:layout_constraintStart_toEndOf="@+id/textView24"-->
+<!--            app:layout_constraintTop_toBottomOf="@+id/textView29" />-->
 
-        <EditText
-            android:id="@+id/textLength"
-            android:layout_width="60dp"
-            android:layout_height="39dp"
-            android:layout_marginStart="4dp"
-            android:layout_marginLeft="4dp"
-            android:inputType="number"
-            android:textSize="16sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/textView25"
-            app:layout_constraintTop_toBottomOf="@+id/textView20"
-            app:layout_constraintVertical_bias="0.105" />
+<!--        <EditText-->
+<!--            android:id="@+id/textLength"-->
+<!--            android:layout_width="60dp"-->
+<!--            android:layout_height="39dp"-->
+<!--            android:layout_marginStart="4dp"-->
+<!--            android:layout_marginLeft="4dp"-->
+<!--            android:inputType="number"-->
+<!--            android:textSize="16sp"-->
+<!--            app:layout_constraintBottom_toBottomOf="parent"-->
+<!--            app:layout_constraintStart_toEndOf="@+id/textView25"-->
+<!--            app:layout_constraintTop_toBottomOf="@+id/textView20"-->
+<!--            app:layout_constraintVertical_bias="0.105" />-->
 
-        <EditText
-            android:id="@+id/textInstructionOffset"
-            android:layout_width="60dp"
-            android:layout_height="39dp"
-            android:layout_marginEnd="160dp"
-            android:layout_marginRight="160dp"
-            android:ems="10"
-            android:inputType="text"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toEndOf="@+id/textView23"
-            app:layout_constraintTop_toBottomOf="@+id/textView20"
-            app:layout_constraintVertical_bias="0.105" />
+<!--        <EditText-->
+<!--            android:id="@+id/textInstructionOffset"-->
+<!--            android:layout_width="60dp"-->
+<!--            android:layout_height="39dp"-->
+<!--            android:layout_marginEnd="160dp"-->
+<!--            android:layout_marginRight="160dp"-->
+<!--            android:ems="10"-->
+<!--            android:inputType="text"-->
+<!--            app:layout_constraintBottom_toBottomOf="parent"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintHorizontal_bias="0.0"-->
+<!--            app:layout_constraintStart_toEndOf="@+id/textView23"-->
+<!--            app:layout_constraintTop_toBottomOf="@+id/textView20"-->
+<!--            app:layout_constraintVertical_bias="0.105" />-->
 
-        <TextView
-            android:id="@+id/textView28"
-            android:layout_width="match_parent"
-            android:layout_height="2dp"
-            android:background="#FFc1c1c1"
-            android:gravity="center_horizontal"
-            android:text="Horizontal Line"
-            android:textSize="18dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textMethod"
-            app:layout_constraintVertical_bias="0.229"
-            tools:layout_editor_absoluteX="0dp" />
+<!--        <TextView-->
+<!--            android:id="@+id/textView28"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="2dp"-->
+<!--            android:background="#FFc1c1c1"-->
+<!--            android:gravity="center_horizontal"-->
+<!--            android:text="Horizontal Line"-->
+<!--            android:textSize="18dp"-->
+<!--            app:layout_constraintBottom_toBottomOf="parent"-->
+<!--            app:layout_constraintTop_toBottomOf="@+id/textMethod"-->
+<!--            app:layout_constraintVertical_bias="0.229"-->
+<!--            tools:layout_editor_absoluteX="0dp" />-->
 
-        <TextView
-            android:id="@+id/textView26"
-            android:layout_width="match_parent"
-            android:layout_height="2dp"
-            android:background="#FFc1c1c1"
-            android:gravity="center_horizontal"
-            android:text="Horizontal Line"
-            android:textSize="25sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView27"
-            app:layout_constraintVertical_bias="0.067"
-            tools:layout_editor_absoluteX="0dp" />
+<!--        <TextView-->
+<!--            android:id="@+id/textView26"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="2dp"-->
+<!--            android:background="#FFc1c1c1"-->
+<!--            android:gravity="center_horizontal"-->
+<!--            android:text="Horizontal Line"-->
+<!--            android:textSize="25sp"-->
+<!--            app:layout_constraintBottom_toBottomOf="parent"-->
+<!--            app:layout_constraintTop_toBottomOf="@+id/textView27"-->
+<!--            app:layout_constraintVertical_bias="0.067"-->
+<!--            tools:layout_editor_absoluteX="0dp" />-->
 
-        <EditText
-            android:id="@+id/textMethod"
-            android:layout_width="110dp"
-            android:layout_height="39dp"
-            android:layout_marginStart="4dp"
-            android:layout_marginLeft="4dp"
-            android:layout_marginTop="12dp"
-            android:ems="10"
-            android:hint="method name"
-            android:inputType="textPersonName"
-            android:textSize="14sp"
-            app:layout_constraintStart_toEndOf="@+id/textView19"
-            app:layout_constraintTop_toBottomOf="@+id/textView4" />
+<!--        <EditText-->
+<!--            android:id="@+id/textMethod"-->
+<!--            android:layout_width="110dp"-->
+<!--            android:layout_height="39dp"-->
+<!--            android:layout_marginStart="4dp"-->
+<!--            android:layout_marginLeft="4dp"-->
+<!--            android:layout_marginTop="12dp"-->
+<!--            android:ems="10"-->
+<!--            android:hint="method name"-->
+<!--            android:inputType="textPersonName"-->
+<!--            android:textSize="14sp"-->
+<!--            app:layout_constraintStart_toEndOf="@+id/textView19"-->
+<!--            app:layout_constraintTop_toBottomOf="@+id/textView4" />-->
 
-        <ToggleButton
-            android:id="@+id/toggleButton"
-            android:layout_width="44dp"
-            android:layout_height="33dp"
-            android:layout_marginStart="156dp"
-            android:layout_marginLeft="156dp"
-            android:layout_marginTop="12dp"
-            android:text="Click me"
-            android:textSize="11dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView19" />
+<!--        <ToggleButton-->
+<!--            android:id="@+id/toggleButton"-->
+<!--            android:layout_width="44dp"-->
+<!--            android:layout_height="33dp"-->
+<!--            android:layout_marginStart="156dp"-->
+<!--            android:layout_marginLeft="156dp"-->
+<!--            android:layout_marginTop="12dp"-->
+<!--            android:text="Click me"-->
+<!--            android:textSize="11dp"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toBottomOf="@+id/textView19" />-->
 
-        <TextView
-            android:id="@+id/textView29"
-            android:layout_width="134dp"
-            android:layout_height="39dp"
-            android:layout_marginStart="20dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginTop="12dp"
-            android:text="Trace callees in unselected classes"
-            android:textColor="#000000"
-            android:textSize="14dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView19" />
+<!--        <TextView-->
+<!--            android:id="@+id/textView29"-->
+<!--            android:layout_width="134dp"-->
+<!--            android:layout_height="39dp"-->
+<!--            android:layout_marginStart="20dp"-->
+<!--            android:layout_marginLeft="20dp"-->
+<!--            android:layout_marginTop="12dp"-->
+<!--            android:text="Trace callees in unselected classes"-->
+<!--            android:textColor="#000000"-->
+<!--            android:textSize="14dp"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toBottomOf="@+id/textView19" />-->
 
-        <TextView
-            android:id="@+id/textView30"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="28dp"
-            android:layout_marginLeft="28dp"
-            android:layout_marginTop="16dp"
-            android:gravity="center"
-            android:text="Call depth"
-            android:textColor="#000000"
-            android:textSize="14dp"
-            app:layout_constraintStart_toEndOf="@+id/toggleButton"
-            app:layout_constraintTop_toBottomOf="@+id/textView19" />
+<!--        <TextView-->
+<!--            android:id="@+id/textView30"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginStart="28dp"-->
+<!--            android:layout_marginLeft="28dp"-->
+<!--            android:layout_marginTop="16dp"-->
+<!--            android:gravity="center"-->
+<!--            android:text="Call depth"-->
+<!--            android:textColor="#000000"-->
+<!--            android:textSize="14dp"-->
+<!--            app:layout_constraintStart_toEndOf="@+id/toggleButton"-->
+<!--            app:layout_constraintTop_toBottomOf="@+id/textView19" />-->
 
         <LinearLayout
             android:layout_width="match_parent"
