@@ -11,7 +11,6 @@
     app:cardCornerRadius="8dp"
     app:strokeWidth="0dp"
     app:cardUseCompatPadding="true"
-    android:backgroundTint="@color/white"
     >
 
     <LinearLayout
@@ -21,7 +20,7 @@
         android:paddingVertical="10dp"
         android:paddingHorizontal="8dp">
 
-        <ImageView
+        <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/icon"
             android:layout_width="60dp"
             android:layout_height="60dp"
@@ -39,25 +38,26 @@
             android:paddingStart="10dp"
             tools:visibility="visible">
 
-            <TextView
+            <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
-                tools:text="App name"
+                android:textColor="@color/darkText"
                 android:textSize="16sp"
                 android:textStyle="bold"
+                tools:text="App name"
                 />
 
-            <TextView
+            <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/app_package"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
-                android:textSize="15sp"
+                android:textSize="13sp"
                 tools:text="package name"/>
 
-            <TextView
+            <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/app_uid"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

@@ -3,36 +3,28 @@ package com.smu.tracing;
 import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Scanner;
 
 // this is the main activity class
@@ -42,8 +34,9 @@ import java.util.Scanner;
 public class MainActivity extends AppCompatActivity {
 
     private ListView listView;
+    private View tracedSummeryView;
+
     private TextView headerText;
-    private TextView footerText;
     private int traceLevel;
     private int traceCallee;
     private long fileSize;
@@ -76,6 +69,7 @@ public class MainActivity extends AppCompatActivity {
 
         // find View by id
         listView = (ListView) findViewById(R.id.list_view);
+        tracedSummeryView = findViewById(R.id.traced_summery_header);
         // toolbar = (Toolbar) findViewById(R.id.toolbar);
 
         // setSupportActionBar(toolbar);
@@ -98,18 +92,33 @@ public class MainActivity extends AppCompatActivity {
         // set list view adapter
         LayoutInflater inflater = getLayoutInflater();
 
-        View footer = inflater.inflate(R.layout.layout_lv_header, listView, false);
-        footerText = (TextView) footer.findViewById(R.id.text_header);
-        listView.addFooterView(footer, null, false);
-
-        View header = inflater.inflate(R.layout.layout_lv_header, listView, false);
-        headerText = (TextView) header.findViewById(R.id.text_header);
+        View header = inflater.inflate(R.layout.app_list_header, listView, false);
+        headerText = (TextView) header.findViewById(R.id.all_apps_count);
         listView.addHeaderView(header, null, false);
+
 
         // initializing and set adapter for listview
         adapter = new ApplicationAdapter(this, R.layout.item_listview, applicationInfos, traceLevel, fileSize,
                 methodName, traceCallee, callDepth, baseAddr, offset, instrOffset, length);
         listView.setAdapter(adapter);
+
+        if(adapter.getCount()>0){
+            var listItem = adapter.getView(0, null, listView);
+            listItem.measure(
+                    View.MeasureSpec.makeMeasureSpec(listView.getWidth(), View.MeasureSpec.EXACTLY),
+                    View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
+            );
+
+            var params = listView.getLayoutParams();
+            var dividerHeight =10;
+
+            params.height = (listItem.getMeasuredHeight() + dividerHeight) * adapter.getCount();
+
+            listView.setLayoutParams(params);
+            listView.requestLayout();
+
+        }
+
     }
 
     @Override
@@ -179,6 +188,8 @@ public class MainActivity extends AppCompatActivity {
         String uid = "";
         String packageName = "";
         String appName = "";
+
+
         try {
             sc = new Scanner(file);
             if (sc != null) {
@@ -238,16 +249,33 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        String monitoring = "";
-        monitoring = monitoring + "Currently selected app : " + appName;
-        monitoring = monitoring + "\n";
-        monitoring = monitoring + "Last traced app: " + maxTraceFile;
-        monitoring = monitoring + "\n";
-        monitoring = monitoring + "Last traced time: " + maxDate;
-        monitoring = monitoring + "\n";
+
+
         currentDate = new Date(System.currentTimeMillis());
-        monitoring = monitoring + "The above information was last updated at: " + currentDate;
-        footerText.setText(monitoring);
+
+        if(appName.length() != 0){
+            View SelectedApp = tracedSummeryView.findViewById(R.id.selected_app);
+            SelectedApp.setVisibility(View.VISIBLE);
+            TextView SelectedAppName = SelectedApp.findViewById(R.id.name);
+            TextView SelectedAppPackageName = SelectedApp.findViewById(R.id.app_package);
+
+            SelectedAppName.setText(appName);
+            SelectedAppPackageName.setText(packageName);
+        }
+
+        if(maxTraceFile.length() != 0){
+            View LastTracedApp = tracedSummeryView.findViewById(R.id.last_traced_app);
+            LastTracedApp.setVisibility(View.VISIBLE);
+
+            TextView LastTracedAppName = LastTracedApp.findViewById(R.id.name);
+            LastTracedAppName.setText(maxTraceFile);
+        }
+
+        TextView lastTracedTime = (TextView) tracedSummeryView.findViewById(R.id.last_traced_time);
+        lastTracedTime.setText(formatDate(maxDate));
+
+        TextView lastUpdated = (TextView) tracedSummeryView.findViewById(R.id.last_updated);
+        lastUpdated.setText(formatDate(currentDate));
     }
 
     public void callBackDataFromAsynctask(List<ApplicationInfo> list) {
@@ -262,6 +290,11 @@ public class MainActivity extends AppCompatActivity {
 
     public void updateUILayout(String content) {
         headerText.setText(content);
+    }
+
+    public static String formatDate(Date date) {
+        SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd yyyy HH:mm", Locale.ENGLISH);
+        return sdf.format(date);
     }
 
     @Override
