@@ -148,7 +148,9 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.MyView
                         intent.putExtra("frameworkAdapter", (ArrayList<String>) frameworkAdapter);
                         intent.putExtra("registersAdapter", (ArrayList<String>) registersAdapter);
                         intent.putExtra("vregsAdapter", (ArrayList<String>) vregsAdapter);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); // remove the previous activities
                         context.startActivity(intent);
+
                     }
                 } catch (ActivityNotFoundException e) {
                     e.printStackTrace();

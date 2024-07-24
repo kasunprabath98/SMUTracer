@@ -1,5 +1,6 @@
 package com.smu.tracing;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.SearchManager;
 import android.content.ActivityNotFoundException;
@@ -20,7 +21,10 @@ import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListView;
@@ -71,14 +75,17 @@ public class GetClassLib extends AppCompatActivity {
     private ArrayList<String> frameworkList = new ArrayList<String>();
     private CustomAdapter adapter;
     // private Toolbar toolbar;
-    private TextView selectAllViewText;
-    private TextView clearAllViewText;
-    private TextView footerText;
-    private TextView footerStopTraceText;
+    private Button selectAllViewButton;
+    private Button clearAllViewButton;
+    private TextView footerTextButton;
+    private TextView footerStopTraceTextButton;
     private TextView headerText;
     private RecyclerView recyclerView;
     private RecyclerAdapter recyclerAdapter;
     private String nav_list[];
+    private boolean hasClickedSelectAll = true;
+
+    private AutoCompleteTextView traceTypes;
 
     public static String convertStreamToString(InputStream is) throws Exception {
         BufferedReader reader = new BufferedReader(new InputStreamReader(is));
@@ -421,6 +428,7 @@ public class GetClassLib extends AppCompatActivity {
         return frameworkList;
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         LayoutInflater inflater = (LayoutInflater) this.getSystemService(this.LAYOUT_INFLATER_SERVICE);
@@ -428,13 +436,6 @@ public class GetClassLib extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_get_class_lib);
 
-        final ListView listView = (ListView) findViewById(R.id.listview);
-
-        // toolbar = (Toolbar) findViewById(R.id.custom_toolbar);
-        // setSupportActionBar(toolbar);
-
-        // final List<UserModel> libs = new ArrayList<>();//
-        final List<UserModel> classes = new ArrayList<>();
 
         Intent intent = getIntent();
         final String traceLevel = intent.getStringExtra("traceLevel");
@@ -467,15 +468,71 @@ public class GetClassLib extends AppCompatActivity {
         final ArrayList<String> vregsAdapter = intent.getStringArrayListExtra("vregsAdapter");
         final ArrayList<String> fieldAdapter = intent.getStringArrayListExtra("fieldAdapter");
 
-        // Sliding navigation bar i.e. libs, classes, filter, regs, vregs etc.
-        recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
-        nav_list = getResources().getStringArray(R.array.nav_list);
-        recyclerAdapter = new RecyclerAdapter(this, nav_list, traceLevel, fileSize, methodName, traceCallee, callDepth,
-                baseAddr, offset, instrOffset, length, packageName, applicationId,
-                libsList, apkPath, lastTraceApp, type, libsStatus, classesStatus, registersStatus,
-                libsAdapter, classesAdapter, filterAdapter, frameworkAdapter, registersAdapter, vregsAdapter);
-        recyclerView.setAdapter(recyclerAdapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        traceTypes = findViewById(R.id.trace_type_auto_complete);
+        traceTypes.setText(getTraceTyeText(type));
+        ArrayAdapter<CharSequence> traceTypeAdapter = ArrayAdapter.createFromResource(this , R.array.nav_list , android.R.layout.simple_spinner_dropdown_item);
+        traceTypes.setAdapter(traceTypeAdapter);
+        traceTypes.setOnItemClickListener((adapterView, view, position, l) -> {
+
+            Intent intent1 = new Intent(GetClassLib.this, GetClassLib.class);
+            try {
+                intent1.putStringArrayListExtra("libsList", (ArrayList<String>) libsList);
+                intent1.putExtra("traceLevel", traceLevel);
+                intent1.putExtra("fileSize", fileSize);
+                intent1.putExtra("methodName", methodName);
+                intent1.putExtra("traceCallee", traceCallee);
+                intent1.putExtra("callDepth", callDepth);
+                intent1.putExtra("baseAddr", baseAddr);
+                intent1.putExtra("offset", offset);
+                intent1.putExtra("instrOffset", instrOffset);
+                intent1.putExtra("length", length);
+                intent1.putExtra("packageName", packageName);
+                intent1.putExtra("applicationId", applicationId);
+                intent1.putExtra("apkPath", apkPath);
+                intent1.putExtra("lastTraceApp", lastTraceApp);
+                if (position == 0)
+                    intent1.putExtra("type", "libs");
+                if (position == 1)
+                    intent1.putExtra("type", "classes");
+                if (position == 2)
+                    intent1.putExtra("type", "filter");
+                if (position == 3)
+                    intent1.putExtra("type", "framework");
+                if (position == 4)
+                    intent1.putExtra("type", "registers");
+                if (position == 5)
+                    intent1.putExtra("type", "vregs");
+                if (position == 6)
+                    intent1.putExtra("type", "fieldread");
+                if (position == 7)
+                    intent1.putExtra("type", "fieldwrite");
+
+                intent1.putExtra("libsStatus", libsStatus);
+                intent1.putExtra("classesStatus", classesStatus);
+                intent1.putExtra("registersStatus", registersStatus);
+                intent1.putExtra("libsAdapter", (ArrayList<String>) libsAdapter);
+                intent1.putExtra("classesAdapter", (ArrayList<String>) classesAdapter);
+                intent1.putExtra("filterAdapter", (ArrayList<String>) filterAdapter);
+                intent1.putExtra("frameworkAdapter", (ArrayList<String>) frameworkAdapter);
+                intent1.putExtra("registersAdapter", (ArrayList<String>) registersAdapter);
+                intent1.putExtra("vregsAdapter", (ArrayList<String>) vregsAdapter);
+                intent1.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); // remove the previous activities
+                startActivity(intent1);
+
+            } catch (ActivityNotFoundException e) {
+                e.printStackTrace();
+            }
+        });
+
+
+        final ListView listView = (ListView) findViewById(R.id.listview);
+        ImageButton scrollToBottom = (ImageButton) findViewById(R.id.buttonScrollBottom);
+
+        // toolbar = (Toolbar) findViewById(R.id.custom_toolbar);
+        // setSupportActionBar(toolbar);
+
+        // final List<UserModel> libs = new ArrayList<>();//
+        final List<UserModel> classes = new ArrayList<>();
 
         // Obtain libraries if there are no lib files
         if (libsList.isEmpty()) {
@@ -804,272 +861,242 @@ public class GetClassLib extends AppCompatActivity {
             }
         }
 
-        listView.setAdapter(adapter);
-        // listView.setSelection(adapter.getCount()-1); //to start at the bottom of the
-        // page
-
-        // View header = inflater.inflate(R.layout.layout_lv_header, listView, false);
         View header = inflater.inflate(R.layout.layout_lv_header, listView, false);
         headerText = (TextView) header.findViewById(R.id.text_header);
+        boolean hasData = false;
         if (type.equals("classes")) {
             if (classesSize == 0) {
                 headerText.setText("Unable to find any method/class from the app's folder");
             } else {
+                hasData = true;
                 headerText.setText("Please select the methods/classes to trace");
             }
         } else if (type.equals("libs")) {
             if (libsSize == 0) {
                 headerText.setText("Unable to find any library from the app's folder");
             } else {
+                hasData = true;
                 headerText.setText("Please select the libraries to trace");
             }
         } else if (type.equals("filter")) {
             if (filterSize == 0) {
                 headerText.setText("Unable to find any method/class from the app's folder");
             } else {
+                hasData = true;
                 headerText.setText("Please select the methods/classes to filter");
             }
         } else if (type.equals("framework")) {
             if (frameworkSize == 0) {
                 headerText.setText("Unable to find any framework API from the app's folder");
             } else {
+                hasData = true;
                 headerText.setText("Please select the methods/classes to filter");
             }
         } else if (type.equals("registers")) {
+            hasData = true;
             headerText.setText("Please select the registers to trace");
         } else if (type.equals("vregs")) {
+            hasData = true;
             headerText.setText("Please select the vregisters to trace");
         } else {
+            hasData = false;
             headerText.setText("Please select start to begin field read/write tracing");
         }
 
         listView.addHeaderView(header, null, false);
+        listView.setDivider(null);
+        listView.setAdapter(adapter);
+        listView.setOnScrollListener(new AbsListView.OnScrollListener() {
+            private int lastFirstVisibleItem;
+            @Override
+            public void onScrollStateChanged(AbsListView absListView, int i) {
 
-        final View selectAllView = inflater.inflate(R.layout.layout_lv_header, listView, false);
-        selectAllViewText = (TextView) selectAllView.findViewById(R.id.text_header);
-        selectAllViewText.setText("Select All");
+            }
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                if(lastFirstVisibleItem < firstVisibleItem) {
+                    scrollToBottom.setVisibility(View.VISIBLE);
+                }
+              lastFirstVisibleItem = firstVisibleItem;
+            }
+        });
+
+
+        final View selectAllView = inflater.inflate(R.layout.list_button, listView, false);
+        selectAllViewButton = (Button) selectAllView.findViewById(R.id.list_button);
+        selectAllViewButton.setText("Select All");
         listView.addFooterView(selectAllView, null, false);
 
-        final View clearAllView = inflater.inflate(R.layout.layout_lv_header, listView, false);
-        clearAllViewText = (TextView) clearAllView.findViewById(R.id.text_header);
-        clearAllViewText.setText("Clear All");
-        listView.addFooterView(clearAllView, null, false);
 
-        // "clear all" button is greyed out by default at the beginning (since nothing
-        // is selected yet)
-        clearAllView.setBackgroundColor(Color.parseColor("#f2dededb"));
-        clearAllViewText.setTextColor(Color.parseColor("#FF9E9E9E"));
+        if(!hasData) {
+            // hide the Select All and Clear All Button
+            selectAllView.setVisibility(View.GONE);
+        }
 
-        final View footerView = inflater.inflate(R.layout.layout_lv_header, null, false);
-        footerText = (TextView) footerView.findViewById(R.id.text_header);
-        footerText.setText("Start Tracing");
+        final View footerView = inflater.inflate(R.layout.list_button, null, false);
+        footerTextButton =  footerView.findViewById(R.id.list_button);
+        footerTextButton.setText("Start Tracing");
         listView.addFooterView(footerView);
 
-        final View footerStopTraceView = inflater.inflate(R.layout.layout_lv_header, null, false);
-        footerStopTraceText = (TextView) footerStopTraceView.findViewById(R.id.text_header);
-        footerStopTraceText.setText("Stop Tracing");
+        final View footerStopTraceView = inflater.inflate(R.layout.list_button, null, false);
+        footerStopTraceTextButton = footerStopTraceView.findViewById(R.id.list_button);
+        footerStopTraceTextButton.setText("Stop Tracing");
         listView.addFooterView(footerStopTraceView);
+
+        // added empty scroll area to stop scroll button overlaying with list footer view
+        TextView empty = new TextView(this);
+        empty.setHeight(350);
+        listView.addFooterView(empty);
 
         final int finalRestrictedIndex = restrictedIndex;
 
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                int index;
-                String selectedFromList = String.valueOf(adapterView.getItemAtPosition(i));
-                i = i - 1;
-                // UserModel model = libs.get(i);
-                UserModel model = adapter.users.get(i);
+        listView.setOnItemClickListener((adapterView, view, i, l) -> {
+            int index;
+            String selectedFromList = String.valueOf(adapterView.getItemAtPosition(i));
+            i = i - 1;
+            // UserModel model = libs.get(i);
+            UserModel model = adapter.users.get(i);
 
-                if (model.isSelected()) {
-                    model.setSelected(false);
-                    if (type.equals("classes")) {
-                        index = classesList.indexOf(model.getUserName());
-                        if (index != -1) {
-                            classesAdapter.remove(Integer.toString(index));
-                        }
-                        // if this is a restricted checkbox, prevent user from unchecking
-                        if (finalRestrictedIndex == index) {
-                            model.setSelected(true);
-                            classesAdapter.add(Integer.toString(i));
-                            Toast toast = Toast.makeText(view.getContext(), "Default class cannot be unchecked",
-                                    Toast.LENGTH_SHORT);
-                            toast.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL, 0, 0);
-                            toast.show();
-                        }
-                    } else if (type.equals("libs")) {
-                        index = libsList.indexOf(model.getUserName());
-                        if (index != -1) {
-                            libsAdapter.remove(Integer.toString(index));
-                        }
-                    } else if (type.equals("filter")) {
-                        index = filterList.indexOf(model.getUserName());
-                        if (index != -1) {
-                            filterAdapter.remove(Integer.toString(index));
-                        }
-                    } else if (type.equals("framework")) {
-                        index = frameworkList.indexOf(model.getUserName());
-                        if (index != -1) {
-                            frameworkAdapter.remove(Integer.toString(index));
-                        }
-                    } else if (type.equals("registers")) {
-                        registersAdapter.remove(Integer.toString(i));
-                    } else {
-                        index = vregsList.indexOf(model.getUserName());
-                        if (index != -1) {
-                            vregsAdapter.remove(Integer.toString(index));
-                        }
-                    }
-                } else {
-                    model.setSelected(true);
-                    if (type.equals("classes")) {
-                        index = classesList.indexOf(model.getUserName());
-                        if (index != -1) {
-                            classesAdapter.add(Integer.toString(index));
-                        }
-                    } else if (type.equals("libs")) {
-                        index = libsList.indexOf(model.getUserName());
-                        if (index != -1) {
-                            libsAdapter.add(Integer.toString(index));
-                        }
-                    } else if (type.equals("filter")) {
-                        index = filterList.indexOf(model.getUserName());
-                        if (index != -1) {
-                            filterAdapter.add(Integer.toString(index));
-                        }
-                    } else if (type.equals("framework")) {
-                        index = frameworkList.indexOf(model.getUserName());
-                        if (index != -1) {
-                            frameworkAdapter.add(Integer.toString(index));
-                        }
-                    } else if (type.equals("registers")) {
-                        index = registersList.indexOf(model.getUserName());
-                        if (index != -1) {
-                            registersAdapter.add(Integer.toString(index));
-                        }
-                    } else {
-                        index = vregsList.indexOf(model.getUserName());
-                        if (index != -1) {
-                            vregsAdapter.add(Integer.toString(index));
-                        }
-                    }
-                }
-
-                // libs.set(i, model);//
-                adapter.users.set(i, model);
-
-                // update the colour of "select all" and "clear all" button
+            if (model.isSelected()) {
+                model.setSelected(false);
                 if (type.equals("classes")) {
-                    if (classesAdapter.size() < libs.size()) {
-                        clearAllView.setBackgroundColor(Color.parseColor("#f2dededb"));
-                        clearAllViewText.setTextColor(Color.parseColor("#FF9E9E9E"));
-                        selectAllView.setBackgroundColor(Color.parseColor("#FFFF00"));
-                        selectAllViewText.setTextColor(Color.parseColor("#000000"));
-                    } else if (classesAdapter.size() == libs.size()) {
-                        clearAllView.setBackgroundColor(Color.parseColor("#FFFF00"));
-                        clearAllViewText.setTextColor(Color.parseColor("#000000"));
-                        selectAllView.setBackgroundColor(Color.parseColor("#f2dededb"));
-                        selectAllViewText.setTextColor(Color.parseColor("#FF9E9E9E"));
-                    } else {
-                        selectAllView.setBackgroundColor(Color.parseColor("#FFFF00"));
-                        clearAllView.setBackgroundColor(Color.parseColor("#FFFF00"));
+                    index = classesList.indexOf(model.getUserName());
+                    if (index != -1) {
+                        classesAdapter.remove(Integer.toString(index));
+                    }
+                    // if this is a restricted checkbox, prevent user from unchecking
+                    if (finalRestrictedIndex == index) {
+                        model.setSelected(true);
+                        classesAdapter.add(Integer.toString(i));
+                        Toast toast = Toast.makeText(view.getContext(), "Default class cannot be unchecked",
+                                Toast.LENGTH_SHORT);
+                        toast.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL, 0, 0);
+                        toast.show();
                     }
                 } else if (type.equals("libs")) {
-                    if (libsAdapter.size() < libs.size()) {
-                        selectAllView.setBackgroundColor(Color.parseColor("#FFFF00"));
-                        selectAllViewText.setTextColor(Color.parseColor("#000000"));
-                        clearAllView.setBackgroundColor(Color.parseColor("#f2dededb"));
-                        clearAllViewText.setTextColor(Color.parseColor("#FF9E9E9E"));
-                    } else if (libsAdapter.size() == libs.size()) {
-                        selectAllView.setBackgroundColor(Color.parseColor("#f2dededb"));
-                        selectAllViewText.setTextColor(Color.parseColor("#FF9E9E9E"));
-                        clearAllView.setBackgroundColor(Color.parseColor("#FFFF00"));
-                        clearAllViewText.setTextColor(Color.parseColor("#000000"));
-                    } else {
-                        selectAllView.setBackgroundColor(Color.parseColor("#FFFF00"));
-                        clearAllView.setBackgroundColor(Color.parseColor("#FFFF00"));
+                    index = libsList.indexOf(model.getUserName());
+                    if (index != -1) {
+                        libsAdapter.remove(Integer.toString(index));
                     }
                 } else if (type.equals("filter")) {
-                    if (filterAdapter.size() < libs.size()) {
-                        clearAllView.setBackgroundColor(Color.parseColor("#f2dededb"));
-                        clearAllViewText.setTextColor(Color.parseColor("#FF9E9E9E"));
-                        selectAllView.setBackgroundColor(Color.parseColor("#FFFF00"));
-                        selectAllViewText.setTextColor(Color.parseColor("#000000"));
-                    } else if (filterAdapter.size() == libs.size()) {
-                        selectAllView.setBackgroundColor(Color.parseColor("#f2dededb"));
-                        selectAllViewText.setTextColor(Color.parseColor("#FF9E9E9E"));
-                        clearAllView.setBackgroundColor(Color.parseColor("#FFFF00"));
-                        clearAllViewText.setTextColor(Color.parseColor("#000000"));
-                    } else {
-                        selectAllView.setBackgroundColor(Color.parseColor("#FFFF00"));
-                        clearAllView.setBackgroundColor(Color.parseColor("#FFFF00"));
+                    index = filterList.indexOf(model.getUserName());
+                    if (index != -1) {
+                        filterAdapter.remove(Integer.toString(index));
                     }
                 } else if (type.equals("framework")) {
-                    if (frameworkAdapter.size() < libs.size()) {
-                        clearAllView.setBackgroundColor(Color.parseColor("#f2dededb"));
-                        clearAllViewText.setTextColor(Color.parseColor("#FF9E9E9E"));
-                        selectAllView.setBackgroundColor(Color.parseColor("#FFFF00"));
-                        selectAllViewText.setTextColor(Color.parseColor("#000000"));
-                    } else if (frameworkAdapter.size() == libs.size()) {
-                        selectAllView.setBackgroundColor(Color.parseColor("#f2dededb"));
-                        selectAllViewText.setTextColor(Color.parseColor("#FF9E9E9E"));
-                        clearAllView.setBackgroundColor(Color.parseColor("#FFFF00"));
-                        clearAllViewText.setTextColor(Color.parseColor("#000000"));
-                    } else {
-                        selectAllView.setBackgroundColor(Color.parseColor("#FFFF00"));
-                        clearAllView.setBackgroundColor(Color.parseColor("#FFFF00"));
+                    index = frameworkList.indexOf(model.getUserName());
+                    if (index != -1) {
+                        frameworkAdapter.remove(Integer.toString(index));
                     }
                 } else if (type.equals("registers")) {
-                    if (registersAdapter.size() < libs.size()) {
-                        clearAllView.setBackgroundColor(Color.parseColor("#f2dededb"));
-                        clearAllViewText.setTextColor(Color.parseColor("#FF9E9E9E"));
-                        selectAllView.setBackgroundColor(Color.parseColor("#FFFF00"));
-                        selectAllViewText.setTextColor(Color.parseColor("#000000"));
-                    } else if (registersAdapter.size() == libs.size()) {
-                        selectAllView.setBackgroundColor(Color.parseColor("#f2dededb"));
-                        selectAllViewText.setTextColor(Color.parseColor("#FF9E9E9E"));
-                        clearAllView.setBackgroundColor(Color.parseColor("#FFFF00"));
-                        clearAllViewText.setTextColor(Color.parseColor("#000000"));
-                    } else {
-                        selectAllView.setBackgroundColor(Color.parseColor("#FFFF00"));
-                        clearAllView.setBackgroundColor(Color.parseColor("#FFFF00"));
-                    }
+                    registersAdapter.remove(Integer.toString(i));
                 } else {
-                    if (vregsAdapter.size() < libs.size()) {
-                        clearAllView.setBackgroundColor(Color.parseColor("#f2dededb"));
-                        clearAllViewText.setTextColor(Color.parseColor("#FF9E9E9E"));
-                        selectAllView.setBackgroundColor(Color.parseColor("#FFFF00"));
-                        selectAllViewText.setTextColor(Color.parseColor("#000000"));
-                    } else if (vregsAdapter.size() == libs.size()) {
-                        selectAllView.setBackgroundColor(Color.parseColor("#f2dededb"));
-                        selectAllViewText.setTextColor(Color.parseColor("#FF9E9E9E"));
-                        clearAllView.setBackgroundColor(Color.parseColor("#FFFF00"));
-                        clearAllViewText.setTextColor(Color.parseColor("#000000"));
-                    } else {
-                        selectAllView.setBackgroundColor(Color.parseColor("#FFFF00"));
-                        clearAllView.setBackgroundColor(Color.parseColor("#FFFF00"));
+                    index = vregsList.indexOf(model.getUserName());
+                    if (index != -1) {
+                        vregsAdapter.remove(Integer.toString(index));
                     }
                 }
-
-                // now update adapter
-                adapter.updateRecords(adapter.users);
+            } else {
+                model.setSelected(true);
+                if (type.equals("classes")) {
+                    index = classesList.indexOf(model.getUserName());
+                    if (index != -1) {
+                        classesAdapter.add(Integer.toString(index));
+                    }
+                } else if (type.equals("libs")) {
+                    index = libsList.indexOf(model.getUserName());
+                    if (index != -1) {
+                        libsAdapter.add(Integer.toString(index));
+                    }
+                } else if (type.equals("filter")) {
+                    index = filterList.indexOf(model.getUserName());
+                    if (index != -1) {
+                        filterAdapter.add(Integer.toString(index));
+                    }
+                } else if (type.equals("framework")) {
+                    index = frameworkList.indexOf(model.getUserName());
+                    if (index != -1) {
+                        frameworkAdapter.add(Integer.toString(index));
+                    }
+                } else if (type.equals("registers")) {
+                    index = registersList.indexOf(model.getUserName());
+                    if (index != -1) {
+                        registersAdapter.add(Integer.toString(index));
+                    }
+                } else {
+                    index = vregsList.indexOf(model.getUserName());
+                    if (index != -1) {
+                        vregsAdapter.add(Integer.toString(index));
+                    }
+                }
             }
+
+            // libs.set(i, model);//
+            adapter.users.set(i, model);
+
+            // update the colour of "select all" and "clear all" button
+            if (type.equals("classes")) {
+                if (classesAdapter.size() < libs.size()) {
+                    selectAllViewButton.setText("Select All");
+                } else if (classesAdapter.size() == libs.size()) {
+                    selectAllViewButton.setText("Clear All");
+                } else {
+                    selectAllViewButton.setText("Select All");
+                }
+            } else if (type.equals("libs")) {
+                if (libsAdapter.size() < libs.size()) {
+                    selectAllViewButton.setText("Select All");
+                } else if (libsAdapter.size() == libs.size()) {
+                    selectAllViewButton.setText("Clear All");
+                } else {
+                    selectAllViewButton.setText("Select All");
+                }
+            } else if (type.equals("filter")) {
+                if (filterAdapter.size() < libs.size()) {
+                    selectAllViewButton.setText("Select All");
+                } else if (filterAdapter.size() == libs.size()) {
+                    selectAllViewButton.setText("Clear All");
+                } else {
+                    selectAllViewButton.setText("Select All");
+                }
+            } else if (type.equals("framework")) {
+                if (frameworkAdapter.size() < libs.size()) {
+                    selectAllViewButton.setText("Selct All");
+                } else if (frameworkAdapter.size() == libs.size()) {
+                    selectAllViewButton.setText("Clear All");
+                } else {
+                    selectAllViewButton.setText("Select All");
+                }
+            } else if (type.equals("registers")) {
+                if (registersAdapter.size() < libs.size()) {
+                    selectAllViewButton.setText("Select All");
+                } else if (registersAdapter.size() == libs.size()) {
+                    selectAllViewButton.setText("Clear All");
+                } else {
+                    selectAllViewButton.setText("Select All");
+                }
+            } else {
+                if (vregsAdapter.size() < libs.size()) {
+                    selectAllViewButton.setText("Select All");
+                } else if (vregsAdapter.size() == libs.size()) {
+                    selectAllViewButton.setText("Clear All");
+                } else {
+                    selectAllViewButton.setText("Select All");
+                }
+            }
+
+            // now update adapter
+            adapter.updateRecords(adapter.users);
         });
 
         // scroll to bottom
-        ImageButton scrollToBottom = (ImageButton) findViewById(R.id.buttonScrollBottom);
-        scrollToBottom.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                listView.setSelection(listView.getCount() - 1);
-            }
-        });
 
-        selectAllView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                for (int i = 0; i < libs.size(); i++) {
-                    UserModel model = libs.get(i);
+        scrollToBottom.setOnClickListener(view -> listView.setSelection(listView.getCount() - 1));
+
+        selectAllViewButton.setOnClickListener(v -> {
+            for (int i = 0; i < libs.size(); i++) {
+                UserModel model = libs.get(i);
+                if(hasClickedSelectAll) {
                     if (!model.isSelected()) {
                         model.setSelected(true);
                         if (type.equals("classes")) {
@@ -1088,62 +1115,7 @@ public class GetClassLib extends AppCompatActivity {
                     }
                     libs.set(i, model);
 
-                    // update the "select all" button colour
-                    if (type.equals("classes")) {
-                        if (classesAdapter.size() == libs.size()) {
-                            selectAllView.setBackgroundColor(Color.parseColor("#f2dededb"));
-                            selectAllViewText.setTextColor(Color.parseColor("#FF9E9E9E"));
-                            clearAllView.setBackgroundColor(Color.parseColor("#FFFF00"));
-                            clearAllViewText.setTextColor(Color.parseColor("#000000"));
-                        }
-                    } else if (type.equals("libs")) {
-                        if (libsAdapter.size() == libs.size()) {
-                            selectAllView.setBackgroundColor(Color.parseColor("#f2dededb"));
-                            selectAllViewText.setTextColor(Color.parseColor("#FF9E9E9E"));
-                            clearAllView.setBackgroundColor(Color.parseColor("#FFFF00"));
-                            clearAllViewText.setTextColor(Color.parseColor("#000000"));
-                        }
-                    } else if (type.equals("filter")) {
-                        if (filterAdapter.size() == libs.size()) {
-                            selectAllView.setBackgroundColor(Color.parseColor("#f2dededb"));
-                            selectAllViewText.setTextColor(Color.parseColor("#FF9E9E9E"));
-                            clearAllView.setBackgroundColor(Color.parseColor("#FFFF00"));
-                            clearAllViewText.setTextColor(Color.parseColor("#000000"));
-                        }
-                    } else if (type.equals("framework")) {
-                        if (frameworkAdapter.size() == libs.size()) {
-                            selectAllView.setBackgroundColor(Color.parseColor("#f2dededb"));
-                            selectAllViewText.setTextColor(Color.parseColor("#FF9E9E9E"));
-                            clearAllView.setBackgroundColor(Color.parseColor("#FFFF00"));
-                            clearAllViewText.setTextColor(Color.parseColor("#000000"));
-                        }
-                    } else if (type.equals("registers")) {
-                        if (registersAdapter.size() == libs.size()) {
-                            selectAllView.setBackgroundColor(Color.parseColor("#f2dededb"));
-                            selectAllViewText.setTextColor(Color.parseColor("#FF9E9E9E"));
-                            clearAllView.setBackgroundColor(Color.parseColor("#FFFF00"));
-                            clearAllViewText.setTextColor(Color.parseColor("#000000"));
-                        }
-                    } else {
-                        if (vregsAdapter.size() == libs.size()) {
-                            selectAllView.setBackgroundColor(Color.parseColor("#f2dededb"));
-                            selectAllViewText.setTextColor(Color.parseColor("#FF9E9E9E"));
-                            clearAllView.setBackgroundColor(Color.parseColor("#FFFF00"));
-                            clearAllViewText.setTextColor(Color.parseColor("#000000"));
-                        }
-                    }
-
-                    // now update adapter
-                    adapter.updateRecords(libs);
-                }
-            }
-        });
-
-        clearAllView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                for (int i = 0; i < libs.size(); i++) {
-                    UserModel model = libs.get(i);
+                }else {
                     if (model.isSelected()) {
                         model.setSelected(false);
                         if (type.equals("classes")) {
@@ -1172,138 +1144,148 @@ public class GetClassLib extends AppCompatActivity {
                     }
                     libs.set(i, model);
 
-                    // update the "clear all" button colour
-                    if (type.equals("classes")) {
-                        if (classesAdapter.size() == 1) {
-                            clearAllView.setBackgroundColor(Color.parseColor("#f2dededb"));
-                            clearAllViewText.setTextColor(Color.parseColor("#FF9E9E9E"));
-                            selectAllView.setBackgroundColor(Color.parseColor("#FFFF00"));
-                            selectAllViewText.setTextColor(Color.parseColor("#000000"));
-                        }
-                    } else if (type.equals("libs")) {
-                        if (libsAdapter.size() == 0) {
-                            clearAllView.setBackgroundColor(Color.parseColor("#f2dededb"));
-                            clearAllViewText.setTextColor(Color.parseColor("#FF9E9E9E"));
-                            selectAllView.setBackgroundColor(Color.parseColor("#FFFF00"));
-                            selectAllViewText.setTextColor(Color.parseColor("#000000"));
-                        }
-                    } else if (type.equals("filter")) {
-                        if (filterAdapter.size() == 0) {
-                            clearAllView.setBackgroundColor(Color.parseColor("#f2dededb"));
-                            clearAllViewText.setTextColor(Color.parseColor("#FF9E9E9E"));
-                            selectAllView.setBackgroundColor(Color.parseColor("#FFFF00"));
-                            selectAllViewText.setTextColor(Color.parseColor("#000000"));
-                        }
-                    } else if (type.equals("framework")) {
-                        if (frameworkAdapter.size() == 0) {
-                            clearAllView.setBackgroundColor(Color.parseColor("#f2dededb"));
-                            clearAllViewText.setTextColor(Color.parseColor("#FF9E9E9E"));
-                            selectAllView.setBackgroundColor(Color.parseColor("#FFFF00"));
-                            selectAllViewText.setTextColor(Color.parseColor("#000000"));
-                        }
-                    } else if (type.equals("registers")) {
-                        if (registersAdapter.size() == 0) {
-                            clearAllView.setBackgroundColor(Color.parseColor("#f2dededb"));
-                            clearAllViewText.setTextColor(Color.parseColor("#FF9E9E9E"));
-                            selectAllView.setBackgroundColor(Color.parseColor("#FFFF00"));
-                            selectAllViewText.setTextColor(Color.parseColor("#000000"));
-                        }
-                    } else {
-                        if (vregsAdapter.size() == 0) {
-                            clearAllView.setBackgroundColor(Color.parseColor("#f2dededb"));
-                            clearAllViewText.setTextColor(Color.parseColor("#FF9E9E9E"));
-                            selectAllView.setBackgroundColor(Color.parseColor("#FFFF00"));
-                            selectAllViewText.setTextColor(Color.parseColor("#000000"));
-                        }
-                    }
-
-                    // now update adapter
-                    adapter.updateRecords(libs);
                 }
+
+//                    // update the "select all" button colour
+//                    if (type.equals("classes")) {
+//                        if (classesAdapter.size() == libs.size()) {
+//                            selectAllView.setBackgroundColor(Color.parseColor("#f2dededb"));
+//                            selectAllViewButton.setTextColor(Color.parseColor("#FF9E9E9E"));
+//
+//                            clearAllView.setBackgroundColor(Color.parseColor("#FFFF00"));
+//                            clearAllViewButton.setTextColor(Color.parseColor("#000000"));
+//                        }
+//                    } else if (type.equals("libs")) {
+//                        if (libsAdapter.size() == libs.size()) {
+//                            selectAllView.setBackgroundColor(Color.parseColor("#f2dededb"));
+//                            selectAllViewButton.setTextColor(Color.parseColor("#FF9E9E9E"));
+//
+//                            clearAllView.setBackgroundColor(Color.parseColor("#FFFF00"));
+//                            clearAllViewButton.setTextColor(Color.parseColor("#000000"));
+//                        }
+//                    } else if (type.equals("filter")) {
+//                        if (filterAdapter.size() == libs.size()) {
+//                            selectAllView.setBackgroundColor(Color.parseColor("#f2dededb"));
+//                            selectAllViewButton.setTextColor(Color.parseColor("#FF9E9E9E"));
+//
+//                            clearAllView.setBackgroundColor(Color.parseColor("#FFFF00"));
+//                            clearAllViewButton.setTextColor(Color.parseColor("#000000"));
+//                        }
+//                    } else if (type.equals("framework")) {
+//                        if (frameworkAdapter.size() == libs.size()) {
+//                            selectAllView.setBackgroundColor(Color.parseColor("#f2dededb"));
+//                            selectAllViewButton.setTextColor(Color.parseColor("#FF9E9E9E"));
+//
+//                            clearAllView.setBackgroundColor(Color.parseColor("#FFFF00"));
+//                            clearAllViewButton.setTextColor(Color.parseColor("#000000"));
+//                        }
+//                    } else if (type.equals("registers")) {
+//                        if (registersAdapter.size() == libs.size()) {
+//                            selectAllView.setBackgroundColor(Color.parseColor("#f2dededb"));
+//                            selectAllViewButton.setTextColor(Color.parseColor("#FF9E9E9E"));
+//
+//                            clearAllView.setBackgroundColor(Color.parseColor("#FFFF00"));
+//                            clearAllViewButton.setTextColor(Color.parseColor("#000000"));
+//                        }
+//                    } else {
+//                        if (vregsAdapter.size() == libs.size()) {
+//                            selectAllView.setBackgroundColor(Color.parseColor("#f2dededb"));
+//                            selectAllViewButton.setTextColor(Color.parseColor("#FF9E9E9E"));
+//
+//                            clearAllView.setBackgroundColor(Color.parseColor("#FFFF00"));
+//                            clearAllViewButton.setTextColor(Color.parseColor("#000000"));
+//                        }
+//                    }
+
+                // now update adapter
+                adapter.updateRecords(libs);
+            }
+
+            if(hasClickedSelectAll) {
+                selectAllViewButton.setText("Clear All");
+                hasClickedSelectAll = false;
+            }else  {
+                selectAllViewButton.setText("Select All");
+                hasClickedSelectAll = true;
             }
         });
 
         final ArrayList<String> traceLibs = new ArrayList<String>();
-        footerView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View v) {
-                // do something
-                traceLibs.clear();
-                List<UserModel> selectedLibs = adapter.getRecords();
-                for (UserModel selectedLib : selectedLibs) {
-                    if (selectedLib.isSelected == true) {
-                        traceLibs.add(selectedLib.userName);
-                    }
+        footerTextButton.setOnClickListener(v -> {
+            // do something
+            traceLibs.clear();
+            List<UserModel> selectedLibs = adapter.getRecords();
+            for (UserModel selectedLib : selectedLibs) {
+                if (selectedLib.isSelected == true) {
+                    traceLibs.add(selectedLib.userName);
                 }
-
-                int level = 0;
-                if (type.equals("classes")) {
-                    writeFileOnInternalStorage(v.getContext(), "trace.cfg", type, traceLevel, fileSize, methodName,
-                            traceCallee, callDepth, baseAddr, offset, instrOffset, length, applicationId, traceLibs,
-                            otherTraceLibs2, otherTraceLibs3, otherTraceLibs4, otherTraceLibs5, otherTraceLibs6);
-                } else if (type.equals("libs")) {
-                    writeFileOnInternalStorage(v.getContext(), "trace.cfg", type, traceLevel, fileSize, methodName,
-                            traceCallee, callDepth, baseAddr, offset, instrOffset, length, applicationId,
-                            otherTraceLibs1, traceLibs, otherTraceLibs3, otherTraceLibs4, otherTraceLibs5,
-                            otherTraceLibs6);
-                } else if (type.equals("filter")) {
-                    writeFileOnInternalStorage(v.getContext(), "trace.cfg", type, traceLevel, fileSize, methodName,
-                            traceCallee, callDepth, baseAddr, offset, instrOffset, length, applicationId,
-                            otherTraceLibs1, otherTraceLibs2, traceLibs, otherTraceLibs4, otherTraceLibs5,
-                            otherTraceLibs6);
-                } else if (type.equals("framework")) {
-                    writeFileOnInternalStorage(v.getContext(), "trace.cfg", type, traceLevel, fileSize, methodName,
-                            traceCallee, callDepth, baseAddr, offset, instrOffset, length, applicationId,
-                            otherTraceLibs1, otherTraceLibs2, otherTraceLibs3, traceLibs, otherTraceLibs5,
-                            otherTraceLibs6);
-                } else if (type.equals("registers")) {
-                    writeFileOnInternalStorage(v.getContext(), "trace.cfg", type, traceLevel, fileSize, methodName,
-                            traceCallee, callDepth, baseAddr, offset, instrOffset, length, applicationId,
-                            otherTraceLibs1, otherTraceLibs2, otherTraceLibs3, otherTraceLibs4, traceLibs,
-                            otherTraceLibs6);
-                } else if (type.equals("vregs")) {
-                    writeFileOnInternalStorage(v.getContext(), "trace.cfg", type, traceLevel, fileSize, methodName,
-                            traceCallee, callDepth, baseAddr, offset, instrOffset, length, applicationId,
-                            otherTraceLibs1, otherTraceLibs2, otherTraceLibs3, otherTraceLibs4, otherTraceLibs5,
-                            traceLibs);
-                } else {
-                    writeFileOnInternalStorage(v.getContext(), "trace.cfg", type, traceLevel, fileSize, methodName,
-                            traceCallee, callDepth, baseAddr, offset, instrOffset, length, applicationId,
-                            otherTraceLibs1, otherTraceLibs2, otherTraceLibs3, otherTraceLibs4, otherTraceLibs5,
-                            otherTraceLibs6);
-                }
-
-                PackageManager pm = v.getContext().getPackageManager();
-                final Intent launchIntent = pm.getLaunchIntentForPackage(packageName);
-                final AlertDialog.Builder dlgAlert = new AlertDialog.Builder(v.getContext());
-                final AlertDialog.Builder dlgAlert1 = new AlertDialog.Builder(v.getContext());
-                dlgAlert.setMessage("Please make sure you have closed any application still currently being traced");
-                dlgAlert.setTitle("Before Tracing");
-                dlgAlert.setPositiveButton("Start Tracing",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                dlgAlert1.setMessage("Tracing has started");
-                                v.getContext().startActivity(launchIntent);
-                                dlgAlert.setPositiveButton("Okay",
-                                        new DialogInterface.OnClickListener() {
-                                            public void onClick(DialogInterface dialog, int which) {
-
-                                            }
-                                        });
-                            }
-                        });
-                dlgAlert.setNegativeButton("Cancel",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                // dismiss the dialog
-                            }
-                        });
-                dlgAlert.setCancelable(true);
-                dlgAlert.create().show();
             }
+
+            int level = 0;
+            if (type.equals("classes")) {
+                writeFileOnInternalStorage(v.getContext(), "trace.cfg", type, traceLevel, fileSize, methodName,
+                        traceCallee, callDepth, baseAddr, offset, instrOffset, length, applicationId, traceLibs,
+                        otherTraceLibs2, otherTraceLibs3, otherTraceLibs4, otherTraceLibs5, otherTraceLibs6);
+            } else if (type.equals("libs")) {
+                writeFileOnInternalStorage(v.getContext(), "trace.cfg", type, traceLevel, fileSize, methodName,
+                        traceCallee, callDepth, baseAddr, offset, instrOffset, length, applicationId,
+                        otherTraceLibs1, traceLibs, otherTraceLibs3, otherTraceLibs4, otherTraceLibs5,
+                        otherTraceLibs6);
+            } else if (type.equals("filter")) {
+                writeFileOnInternalStorage(v.getContext(), "trace.cfg", type, traceLevel, fileSize, methodName,
+                        traceCallee, callDepth, baseAddr, offset, instrOffset, length, applicationId,
+                        otherTraceLibs1, otherTraceLibs2, traceLibs, otherTraceLibs4, otherTraceLibs5,
+                        otherTraceLibs6);
+            } else if (type.equals("framework")) {
+                writeFileOnInternalStorage(v.getContext(), "trace.cfg", type, traceLevel, fileSize, methodName,
+                        traceCallee, callDepth, baseAddr, offset, instrOffset, length, applicationId,
+                        otherTraceLibs1, otherTraceLibs2, otherTraceLibs3, traceLibs, otherTraceLibs5,
+                        otherTraceLibs6);
+            } else if (type.equals("registers")) {
+                writeFileOnInternalStorage(v.getContext(), "trace.cfg", type, traceLevel, fileSize, methodName,
+                        traceCallee, callDepth, baseAddr, offset, instrOffset, length, applicationId,
+                        otherTraceLibs1, otherTraceLibs2, otherTraceLibs3, otherTraceLibs4, traceLibs,
+                        otherTraceLibs6);
+            } else if (type.equals("vregs")) {
+                writeFileOnInternalStorage(v.getContext(), "trace.cfg", type, traceLevel, fileSize, methodName,
+                        traceCallee, callDepth, baseAddr, offset, instrOffset, length, applicationId,
+                        otherTraceLibs1, otherTraceLibs2, otherTraceLibs3, otherTraceLibs4, otherTraceLibs5,
+                        traceLibs);
+            } else {
+                writeFileOnInternalStorage(v.getContext(), "trace.cfg", type, traceLevel, fileSize, methodName,
+                        traceCallee, callDepth, baseAddr, offset, instrOffset, length, applicationId,
+                        otherTraceLibs1, otherTraceLibs2, otherTraceLibs3, otherTraceLibs4, otherTraceLibs5,
+                        otherTraceLibs6);
+            }
+
+            PackageManager pm = v.getContext().getPackageManager();
+            final Intent launchIntent = pm.getLaunchIntentForPackage(packageName);
+            final AlertDialog.Builder dlgAlert = new AlertDialog.Builder(v.getContext());
+            final AlertDialog.Builder dlgAlert1 = new AlertDialog.Builder(v.getContext());
+            dlgAlert.setMessage("Please make sure you have closed any application still currently being traced");
+            dlgAlert.setTitle("Before Tracing");
+            dlgAlert.setPositiveButton("Start Tracing",
+                    (dialog, which) -> {
+                        dlgAlert1.setMessage("Tracing has started");
+                        v.getContext().startActivity(launchIntent);
+                        dlgAlert.setPositiveButton("Okay",
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int which) {
+
+                                    }
+                                });
+                    });
+            dlgAlert.setNegativeButton("Cancel",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            // dismiss the dialog
+                        }
+                    });
+            dlgAlert.setCancelable(true);
+            dlgAlert.create().show();
         });
 
-        footerStopTraceView.setOnClickListener(new View.OnClickListener() {
+        footerStopTraceTextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
                 Log.d("[writeFileOnInternalStorage]", "[onClick]packageName: " + packageName);
@@ -1322,42 +1304,37 @@ public class GetClassLib extends AppCompatActivity {
             final ArrayList<String> libsAdapter, final ArrayList<String> classesAdapter,
             final ArrayList<String> filterAdapter, final ArrayList<String> frameworkAdapter,
             final ArrayList<String> registersAdapter, final ArrayList<String> vregsAdapter) {
-        return new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                try {
-                    Intent intent = new Intent(v.getContext(), com.smu.tracing.GetClassLib.class);
-                    intent.removeExtra("classesAdapter");
-                    if (null != intent) {
-                        intent.putStringArrayListExtra("libsList", (ArrayList<String>) libsList);
-                        intent.putExtra("traceLevel", level);
-                        intent.putExtra("fileSize", size);
-                        intent.putExtra("methodName", methodName);
-                        intent.putExtra("traceCallee", callee);
-                        intent.putExtra("baseAddr", baseAddr);
-                        intent.putExtra("offset", offset);
-                        intent.putExtra("instrOffset", instrOffset);
-                        intent.putExtra("length", length);
-                        intent.putExtra("packageName", packageName);
-                        intent.putExtra("applicationId", applicationId);
-                        intent.putExtra("apkPath", apkPath);
-                        intent.putExtra("lastTraceApp", lastTraceApp);
-                        intent.putExtra("type", type);
-                        intent.putExtra("libsStatus", libsStatus);
-                        intent.putExtra("classesStatus", classesStatus);
-                        intent.putExtra("registersStatus", registersStatus);
-                        intent.putExtra("libsAdapter", (ArrayList<String>) libsAdapter);
-                        intent.putExtra("classesAdapter", (ArrayList<String>) classesAdapter);
-                        intent.putExtra("filterAdapter", (ArrayList<String>) filterAdapter);
-                        intent.putExtra("frameworkAdapter", (ArrayList<String>) frameworkAdapter);
-                        intent.putExtra("registersAdapter", (ArrayList<String>) registersAdapter);
-                        intent.putExtra("vregsAdapter", (ArrayList<String>) vregsAdapter);
-                        v.getContext().startActivity(intent);
-                        finish();
-                    }
-                } catch (ActivityNotFoundException e) {
-                    e.printStackTrace();
-                }
+        return v -> {
+            try {
+                Intent intent = new Intent(v.getContext(), GetClassLib.class);
+                intent.removeExtra("classesAdapter");
+                intent.putStringArrayListExtra("libsList", (ArrayList<String>) libsList);
+                intent.putExtra("traceLevel", level);
+                intent.putExtra("fileSize", size);
+                intent.putExtra("methodName", methodName);
+                intent.putExtra("traceCallee", callee);
+                intent.putExtra("baseAddr", baseAddr);
+                intent.putExtra("offset", offset);
+                intent.putExtra("instrOffset", instrOffset);
+                intent.putExtra("length", length);
+                intent.putExtra("packageName", packageName);
+                intent.putExtra("applicationId", applicationId);
+                intent.putExtra("apkPath", apkPath);
+                intent.putExtra("lastTraceApp", lastTraceApp);
+                intent.putExtra("type", type);
+                intent.putExtra("libsStatus", libsStatus);
+                intent.putExtra("classesStatus", classesStatus);
+                intent.putExtra("registersStatus", registersStatus);
+                intent.putExtra("libsAdapter", (ArrayList<String>) libsAdapter);
+                intent.putExtra("classesAdapter", (ArrayList<String>) classesAdapter);
+                intent.putExtra("filterAdapter", (ArrayList<String>) filterAdapter);
+                intent.putExtra("frameworkAdapter", (ArrayList<String>) frameworkAdapter);
+                intent.putExtra("registersAdapter", (ArrayList<String>) registersAdapter);
+                intent.putExtra("vregsAdapter", (ArrayList<String>) vregsAdapter);
+                v.getContext().startActivity(intent);
+                finish();
+            } catch (ActivityNotFoundException e) {
+                e.printStackTrace();
             }
         };
     }
@@ -1375,6 +1352,32 @@ public class GetClassLib extends AppCompatActivity {
         searchView.setOnQueryTextListener(onQueryTextListener()); // text changed listener
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         return true;
+    }
+
+    private String getTraceTyeText(String type) {
+
+        String selected = "Libraries";
+
+        switch (type) {
+            case "libs":
+                return  "Libraries";
+            case "classes":
+                return  "Classes";
+            case "filter":
+                return  "Filter";
+            case "framework":
+                return "Framework";
+            case "registers":
+                return  "Regs";
+            case "vregs":
+                return  "VRegs";
+            case "fieldread":
+                return  "Fieild_Read";
+            case  "fieldwrite":
+                return  "Field_Write";
+            default:
+                return  selected;
+        }
     }
 
     private SearchView.OnQueryTextListener onQueryTextListener() {
