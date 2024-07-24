@@ -3,6 +3,7 @@
     <string name="action_settings">Settings</string>
     <string name="search">Search</string>
     <string name="trace_type">Trace Type</string>
+    <string name="appIconDescription">App Icon Placeholder</string>
     <string name="enter_trigger_condition_optional">Enter trigger condition (optional)</string>
     <string name="trace_file_size_max_50mb">Trace file size (max 50MB)</string>
     <string name="method_name">Method name</string>

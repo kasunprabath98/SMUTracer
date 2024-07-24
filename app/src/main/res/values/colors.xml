@@ -14,4 +14,8 @@
     <color name="colorAccent">#0033CC</color>
     <color name="actionBar">#003C6A</color>
     <color name="black">#000000</color>
+
+    <color name="backgroundGrey">#F9F9F9</color>
+    <color name="white">#FFFFFF</color>
+    <color name="darkText">#1B1B1B</color>
 </resources>
